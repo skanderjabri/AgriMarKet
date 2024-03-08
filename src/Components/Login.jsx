@@ -17,7 +17,7 @@ const Login = () => {
       <div>
 
 
-        <div className="container-xxl py-5">
+        <div className="container-xxl py-5 ">
           <div className="container">
             <div class="row">
               <div class="col-lg-6">
@@ -25,7 +25,7 @@ const Login = () => {
                   <h1 class="display-5 mb-3">Se connecter</h1>
                   <p> Connectez-vous pour découvrir les articles disponibles et prendre part aux ventes proposées sur notre plateforme. </p>
                 </div>
-                <div className='row'>
+                <div className='row wow fadeInUp' data-wow-delay="0.1s" >
                   <div className="col-lg-12">
                     <label htmlFor='email'>Email : </label>
                     <input type='email' className='form-control' />
@@ -45,7 +45,7 @@ const Login = () => {
                   </div>
                 </div>
               </div>
-              <div class="col-lg-6 mt-5 " >
+              <div class="col-lg-6 mt-5  wow fadeInUp" data-wow-delay="0.1s" >
                 <h4 >Pas encore enregistré ?</h4>
                 <p className='mt-3'>
                   La création d'un nouveau compte est facile et prend moins d'une minute.
