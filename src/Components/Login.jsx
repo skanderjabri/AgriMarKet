@@ -1,70 +1,51 @@
-import React from 'react'
-import Header from './Header'
-import Footer from './Footer'
+import React, { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
+import { Divider } from 'antd';
 const Login = () => {
   return (
-    <div>
-      <Header />
-      <div class="container-fluid page-header wow fadeIn" data-wow-delay="0.1s">
-        <div class="container">
-          <nav aria-label="breadcrumb animated slideInDown">
-            <ol class="breadcrumb mb-0">
-            </ol>
-          </nav>
-        </div>
-      </div>
-      <div>
+    <div className='conatinerSignUp ' >
+      <div className='sub-div-containerSignup wow fadeInUp' data-wow-delay="0.1s" style={{ paddingBottom: '20px' }}>
+        <div className='row'>
+          <div className='col-lg-12'>
+            <div className='card mt-4 p-4  ' style={{ alignContent: 'center', justifyContent: 'center', textAlign: "center" }} >
+              <a href='/'>
+                <h1 class="fw-bold text-primary m-0">Agri<span class="text-secondary">Mar</span>Ket</h1>
+              </a>
+              <h4 class="mt-5 mb-3">Se connecter</h4>
+              <p className='mt-4'>
+                Connectez-vous pour découvrir les articles disponibles et prendre  <br />part aux ventes proposées sur notre plateforme              </p>
 
-
-        <div className="container-xxl py-5 ">
-          <div className="container">
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="section-header text-start mb-5 wow fadeInUp" data-wow-delay="0.1s" style={{ maxWidth: '500px' }}>
-                  <h1 class="display-5 mb-3">Se connecter</h1>
-                  <p> Connectez-vous pour découvrir les articles disponibles et prendre part aux ventes proposées sur notre plateforme. </p>
-                </div>
-                <div className='row wow fadeInUp' data-wow-delay="0.1s" >
-                  <div className="col-lg-12">
-                    <label htmlFor='email'>Email : </label>
-                    <input type='email' className='form-control' />
-                  </div>
-                  <div className="col-lg-12" style={{ marginTop: '25px' }}>
-                    <label htmlFor='email'>Mot de passe : </label>
-                    <input type='password' className='form-control' />
-                  </div>
-                  <div className="col-lg-6 text-primary pointer-select" style={{ marginTop: '30px' }}>
-                    Mot de passe oublié ?
-                  </div>
-                  <div className="col-lg-6 d-flex justify-content-end"
-                    style={{
-                      marginTop: '10px'
-                    }}>
-                    <button className='btn btn-primary rounded-pill py-3 px-5 '>Se connecter</button>
-                  </div>
+              <div className='row mt-4' style={{ textAlign: 'left' }}>
+                <label htmlFor='email' style={{ fontSize: '16px', fontWeight: '500' }}> Votre email *	 :</label>
+                <input type='email' placeholder='alex@gmail.com' name='email' className='form-control mt-1' />
+              </div>
+              <div className='row mt-3' style={{ textAlign: 'left' }}>
+                <label htmlFor='password' style={{ fontSize: '16px', fontWeight: '500' }}> Votre mot de passe *	 :</label>
+                <input type='password' placeholder='*******' name='email' className='form-control mt-1' />
+              </div>
+              <div className='row mt-3' style={{ textAlign: 'right' }}>
+                <p className="text-primary" style={{ fontWeight: '500', cursor: 'pointer' }}> Mot de passe oublié ?</p>
+              </div>
+              <div class="row mt-4">
+                <div class="col-md-12 ">
+                  <button class="btn btn-primary rounded-pill ms-4"> Me connecter</button>
                 </div>
               </div>
-              <div class="col-lg-6 mt-5  wow fadeInUp" data-wow-delay="0.1s" >
-                <h4 >Pas encore enregistré ?</h4>
-                <p className='mt-3'>
-                  La création d'un nouveau compte est facile et prend moins d'une minute.
-                </p>
-                <NavLink to="/registre">
-                  <p className='mt-3 text-primary pointer-select'>
-                    S'inscrire pour un nouveau compte
-                  </p>
-                </NavLink>
+              <Divider plain> <span style={{ fontSize: '18px', color: "#555555" }}>Ou</span></Divider>
+              <div class="row ">
+                <div class="col-md-12 ">
+                  <a href='/registre'>
+                    <button class="btn btn-secondary rounded-pill ms-4"> Créer mon compte gratuitement </button>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
+          <div>
+          </div>
         </div>
-
       </div>
-
-      <Footer />
     </div>
-
 
   )
 }

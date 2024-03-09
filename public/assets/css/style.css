@@ -651,7 +651,7 @@
 }
 
 .conatinerSignUp {
-  height: 100vh !important;
+  min-height: 100vh !important;
   margin: 0 !important;
   background-image: url("../img/bg_3.jpg");
   background-size: cover;
@@ -661,4 +661,48 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+}
+.dropzone {
+  min-height: 150px;
+  border: 2px dashed #3cb815;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.dropzone .dz-message {
+  font-size: 24px;
+  width: 100%;
+}
+.shake-admin {
+  animation: shake-admin-animation 1.2s ease infinite;
+  transform-origin: 50% 50%;
+}
+.image-admin-shake {
+  margin: 0 auto;
+  width: 150px;
+  height: 150px;
+  background: red;
+}
+@keyframes shake-admin-animation {
+  0% {
+    transform: translate(0, 0);
+  }
+  10.78571% {
+    transform: rotate(2deg);
+  }
+  30.57143% {
+    transform: rotate(0);
+  }
+  50.35714% {
+    transform: rotate(2deg);
+  }
+  70.14286% {
+    transform: rotate(0);
+  }
+  80.92857% {
+    transform: rotate(2deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
 }
