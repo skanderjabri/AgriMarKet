@@ -128,15 +128,10 @@ const ProductSection = () => (
 const Home = () => {
     return (
         <div className="App">
-            {/* Spinner Start   
             <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
                 <div class="spinner-border text-primary" role="status"></div>
             </div>
-            {/* Spinner End  */}
-
-            {/* Navbar Start */}
             <Header />
-            {/*  Navbar End */}
             {/*  Carousel Start  */}
             <div class="container-fluid p-0 mb-5 wow fadeIn" data-wow-delay="0.1s">
                 <div id="header-carousel" class="carousel slide" data-bs-ride="carousel">
@@ -190,12 +185,12 @@ const Home = () => {
             <div class="container-xxl py-5">
                 <div class="container">
                     <div class="row g-5 align-items-center">
-                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="about-img position-relative overflow-hidden p-5 pe-0">
                                 <img class="img-fluid w-100" src="./assets/img/smiling-senior-man-holding-ripe-juicy-strawberries.jpg" style={{ borderRadius: '83% 17% 82% 18% / 15% 82% 18% 85%' }} />
                             </div>
                         </div>
-                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.2s">
                             <h1 class="display-5 mb-4">Développez votre activité sans perdre de temps
                             </h1>
                             <p class="mb-4">Quelle que soit votre taille ou votre activité, que vous soyez acheteur, vendeur ou prestataire de services,

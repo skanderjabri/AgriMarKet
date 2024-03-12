@@ -1,6 +1,14 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 const Header = () => {
+    const logout = () => {
+        localStorage.removeItem("AgriMaketRole");
+        localStorage.removeItem("AgriMaketNomAcheuteur");
+        localStorage.removeItem("AgriMaketPrenomAcheuteur");
+        localStorage.removeItem("AgriMaketNomProducteur");
+        localStorage.removeItem("AgriMaketPrenomProducteur");
+        window.location.reload();
+    }
     return (
         <div class="container-fluid fixed-top px-0 wow fadeIn" data-wow-delay="0.1s">
             <div class="top-bar row gx-0 align-items-center d-none d-lg-flex">
@@ -27,7 +35,7 @@ const Header = () => {
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto p-4 p-lg-0">
                         <NavLink to="/">
-                            <a class="nav-item nav-link active">Accueil</a>
+                            <a class="nav-item nav-link active" href='/'>Accueil</a>
                         </NavLink>
                         <NavLink to="/Apropos">
                             <a class="nav-item nav-link">À Propos</a>
@@ -48,24 +56,45 @@ const Header = () => {
                         <NavLink to="/ContactUS">
                             <a class="nav-item nav-link">Contact</a>
                         </NavLink>
+
+
                     </div>
                     <div class="d-none d-lg-flex ms-2">
                         <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
                             <small class="fa fa-search text-body"> </small>
-                        </a>
-                        <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
-                            <small class="fa fa-user text-body"></small>
                         </a>
                         <NavLink to="/Panier">
                             <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
                                 <small class="fa fa-shopping-bag text-body"></small>
                             </a>
                         </NavLink>
-                        <NavLink to="/Login">
-                            <button className='btn btn-primary rounded-pill ms-3  '>Se connecter</button>
-                        </NavLink>
-
+                        {localStorage.getItem("AgriMaketRole") === "" || localStorage.getItem("AgriMaketRole") === null && (
+                            <NavLink to="/Login">
+                                <button className='btn btn-primary rounded-pill ms-3'>Se connecter</button>
+                            </NavLink>
+                        )}
                     </div>
+                    {localStorage.getItem("AgriMaketRole") !== "" && localStorage.getItem("AgriMaketRole") !== null && (
+                        <NavLink to="/">
+                            <a class="nav-item nav-link" href='/'>
+                                {localStorage.getItem("AgriMaketRole") === "acheteur" && (
+                                    <span className='text-secondary' style={{ fontSize: '17px', textTransform: 'capitalize', fontWeight: '600' }}>  {localStorage.getItem("AgriMaketNomAcheuteur")} {' '} {localStorage.getItem("AgriMaketPrenomAcheuteur")}</span>
+                                )}
+                                {localStorage.getItem("AgriMaketRole") === "producteur" && (
+                                    <span className='text-secondary dropdown-toggle' style={{ fontSize: '17px', textTransform: 'capitalize', fontWeight: '600' }} >
+                                        {localStorage.getItem("AgriMaketNomProducteur")} {' '} {localStorage.getItem("AgriMaketPrenomProducteur")}
+                                        <div class="dropdown-menu m-0">
+                                            <a class="dropdown-item" onClick={logout} >Déconnexion</a>
+                                            <a href="feature.html" class="dropdown-item">Our Features</a>
+                                            <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                            <a href="404.html" class="dropdown-item">404 Page</a>
+                                        </div>
+
+                                    </span>
+                                )}
+                            </a>
+                        </NavLink>
+                    )}
                 </div>
             </nav >
         </div >

@@ -1,20 +1,44 @@
 import React, { useState } from 'react'
 import { Stepper, Step } from 'react-form-stepper';
 import ImageUploading from 'react-images-uploading';
-
+import SaveProducteurApi from '../Api/SaveProducteurApi';
+import useAlert from '../Function/AlertBootsrap';
+import Alert from "react-bootstrap/Alert"
+import { useNavigate } from 'react-router-dom';
 const Registre = () => {
+    const navigate = useNavigate()
     const [selectedCard, setSelectedCard] = useState("");
     const [step1, setstep1] = useState(true);
     const [step2, setstep2] = useState(false);
     const [step3, setstep3] = useState(false);
     const [images, setImages] = useState([]);
+    const [email, setEmail] = useState("");
+    const [password, setpassword] = useState("");
+    const [confirmPassword, setconfirmPassword] = useState("");
+    const [nom_producteur, setnom_producteur] = useState("");
+    const [prenom_producteur, setprenom_producteur] = useState("");
+    const [telephone, setTelephone] = useState("");
+    const [adresse, setadresse] = useState("");
+    const [nom_exploitation_agricole, setnom_exploitation_agricole] = useState("");
+    const [type_de_culture, settype_de_culture] = useState("");
+    const [emplacement_de_exploitation, setemplacement_de_exploitation] = useState("");
+    const [superficie_terres_agricoles, setsuperficie_terres_agricoles] = useState("");
+    const [description_exploitation, setdescription_exploitation] = useState("");
+    const [modes_production, setmodes_production] = useState("");
+    const [certifications, setcertifications] = useState("");
+    const { alertUser, showAlert, clearAlert } = useAlert();
+    const [isLoading, setIsLoading] = useState(false);
+
     const maxNumber = 10;
     const maxNumber1 = 1;
+    var height = window.innerHeight;
+    var width = window.innerWidth;
 
     const onChange = (imageList, addUpdateIndex) => {
-        console.log(imageList, addUpdateIndex);
         setImages(imageList);
     };
+
+
 
     const handleCardClick = (card) => {
         setSelectedCard(card);
@@ -31,8 +55,135 @@ const Registre = () => {
         setstep3(false);
         setstep2(true);
     }
+
+
+    const Step2toStep3Producteur = () => {
+        if (nom_producteur.trim() === "") {
+            showAlert("Le nom obligatoire !", "danger");
+            return;
+        }
+        if (prenom_producteur.trim() === "") {
+            showAlert("Le prénom obligatoire !", "danger");
+            return;
+        }
+        if (telephone.trim() === "") {
+            showAlert("Le numéro du téléphone  obligatoire !", "danger");
+            return;
+        }
+        if (adresse.trim() === "") {
+            showAlert(" L'adresse obligatoire !", "danger");
+            return;
+        }
+        if (email.trim() === "") {
+            showAlert("Email obligatoire !", "danger");
+            return;
+        }
+        if (password.trim() === "") {
+            showAlert("Mot de passe obligatoire !", "danger");
+            return;
+        }
+        if (password.trim() !== confirmPassword.trim()) {
+            showAlert("Les deux mots de passe ne sont pas identiques !", "danger");
+            return;
+        }
+        clearAlert();
+        setstep2(false);
+        setstep3(true);
+    }
+
+
+    const SignupProducteur = async () => {
+        if (nom_exploitation_agricole.trim() === "") {
+            showAlert("Nom exploitation agricole obligatoire", "danger");
+            return;
+        }
+        if (emplacement_de_exploitation.trim() === "") {
+            showAlert("Adresse exploitation obligatoire", "danger");
+            return;
+        }
+        if (superficie_terres_agricoles.trim() === "") {
+            showAlert("Superficie terres agricoles obligatoire", "danger");
+            return;
+        }
+        if (type_de_culture.trim() === "") {
+            showAlert("Type de culture agricole obligatoire", "danger");
+            return;
+        }
+        if (description_exploitation.trim() === "") {
+            showAlert("Description exploitation agricole", "danger");
+            return;
+        }
+        if (modes_production.trim() === "") {
+            showAlert("Modes de production agricole", "danger");
+            return;
+        }
+        if (certifications.trim() === "") {
+            showAlert("certifications agricoles", "danger");
+            return;
+        }
+        if (images.length < 2) {
+            showAlert("2 images minimum pour l'exploitation agricole", "danger");
+            return;
+        }
+        clearAlert();
+        setIsLoading(true)
+        await SaveProducteurApi(
+            email,
+            password,
+            nom_producteur,
+            prenom_producteur,
+            telephone,
+            adresse,
+            nom_exploitation_agricole,
+            type_de_culture,
+            emplacement_de_exploitation,
+            superficie_terres_agricoles,
+            modes_production,
+            certifications,
+            description_exploitation,
+            images
+        ).then((response) => {
+            if (response.data.message === "Utilisateur existe !") {
+                showAlert("Producteur déja existe ! ", "danger");
+            }
+            else if (response.data.message === "ok") {
+                navigate('/Login')
+                window.location.reload();
+            }
+            else {
+                showAlert("erreur se reproduit lors de la création du l'utilisateur ", "danger");
+            }
+        })
+            .catch((error) => {
+                console.log("erreur se reproduit lors de la connexion " + error)
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+
+
+    }
     return (
         <div className='conatinerSignUp ' >
+            {isLoading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "rgba(0,0,0,0.3)",
+                        zIndex: 100000,
+                        height: height,
+                    }}
+                >
+                    <div class="loaderLog"></div>
+                </div>
+            )}
             <div className='sub-div-containerSignup wow fadeInUp' data-wow-delay="0.1s" style={{ paddingBottom: '20px' }}>
                 <div className='row'>
                     <div className='col-lg-12'>
@@ -44,6 +195,11 @@ const Registre = () => {
                             <p className='mt-4'>
                                 Créez votre Profil et profitez de la Plateforme, c'est totalement Gratuit !
                             </p>
+                            {alertUser && alertUser.message !== "" && alertUser.type !== "" && (
+                                <Alert key={alertUser.type} variant={alertUser.type} >
+                                    {alertUser.message}
+                                </Alert>
+                            )}
                             {/* Step 1 Start */}
                             {step1 && (
                                 <div>
@@ -104,44 +260,44 @@ const Registre = () => {
                                     <div className='row' >
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='nom_prod' style={{ fontSize: '16px', fontWeight: '500' }}> Votre nom *	 :</label>
-                                            <input type='text' placeholder='ALex Fernandes' name='nom_prod' className='form-control mt-1' />
+                                            <input type='text' placeholder='ALex Fernandes' name='nom_prod' className='form-control mt-1' value={nom_producteur} onChange={(e) => { setnom_producteur(e.target.value) }} />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='pre_prod' style={{ fontSize: '16px', fontWeight: '500' }}> Votre prénom * :</label>
-                                            <input type='text' placeholder='Emanuelle' name='pre_prod' className='form-control mt-1' />
+                                            <input type='text' placeholder='Emanuelle' name='pre_prod' className='form-control mt-1' value={prenom_producteur} onChange={(e) => { setprenom_producteur(e.target.value) }} />
                                         </div>
                                     </div>
                                     <div className='row mt-3'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='tel_prod' style={{ fontSize: '16px', fontWeight: '500' }}> Téléphone * :</label>
-                                            <input type='number' placeholder='+216 23 45 56 98' name='tel_prod' className='form-control mt-1' />
+                                            <input type='number' placeholder='+216 23 45 56 98' name='tel_prod' className='form-control mt-1' value={telephone} onChange={(e) => { setTelephone(e.target.value) }} />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='adr_prod' style={{ fontSize: '16px', fontWeight: '500' }}> Votre adresse * :</label>
-                                            <input type='text' placeholder='Tunisie , Tunis ' name='adr_prod' className='form-control mt-1' />
+                                            <input type='text' placeholder='Tunisie , Tunis ' name='adr_prod' className='form-control mt-1' value={adresse} onChange={(e) => { setadresse(e.target.value) }} />
                                         </div>
                                     </div>
                                     <div className='row mt-3'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='email_prod' style={{ fontSize: '16px', fontWeight: '500' }}> Email * :</label>
-                                            <input type='email' placeholder='Emanuelle@gmail.com' name='email_prod' className='form-control mt-1' />
+                                            <input type='email' placeholder='Emanuelle@gmail.com' name='email_prod' className='form-control mt-1' value={email} onChange={(e) => { setEmail(e.target.value) }} />
                                         </div>
                                     </div>
                                     <div className='row mt-3'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='pass_prod' style={{ fontSize: '16px', fontWeight: '500' }}> Mot de passe * :</label>
-                                            <input type='password' placeholder='********' name='pass_prod' className='form-control mt-1' />
+                                            <input type='password' placeholder='********' name='pass_prod' className='form-control mt-1' value={password} onChange={(e) => { setpassword(e.target.value) }} />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='con_pass_prod' style={{ fontSize: '16px', fontWeight: '500' }}> Confirmez le mot de passe * :</label>
-                                            <input type='password' placeholder='********' name='con_pass_prod' className='form-control mt-1' />
+                                            <input type='password' placeholder='********' name='con_pass_prod' className='form-control mt-1' value={confirmPassword} onChange={(e) => { setconfirmPassword(e.target.value) }} />
                                         </div>
                                     </div>
                                     <div class="row mt-4">
                                         <div class="col-md-6 text-left">
                                         </div>
                                         <div class="col-md-6 text-right">
-                                            <button class="btn btn-primary rounded-pill ms-3" onClick={() => step2tostep3()}>Passer à l'étape suivante  <i class="fa-solid fa-arrow-right" style={{ marginLeft: '10px' }}></i> </button>
+                                            <button class="btn btn-primary rounded-pill py-2 px-5 rounded-pill ms-2" onClick={() => Step2toStep3Producteur()}>Passer à l'étape suivante  <i class="fa-solid fa-arrow-right" style={{ marginLeft: '10px' }}></i> </button>
                                         </div>
                                     </div>
 
@@ -209,23 +365,7 @@ const Registre = () => {
                                             </datalist>
                                         </div>
                                     </div>
-                                    {/*  
-                                     <div className='row mt-3'>
-                                        <div className='col-lg-12' style={{ textAlign: 'left' }}>
-                                            <label htmlFor='TypeAcheteur' style={{ fontSize: '16px', fontWeight: '500' }}>Type Acheteur * :</label>
-                                            <input list="TypeAcheteur" name="TypeAcheteur" className='form-control form-select mt-1' />
-                                            <datalist id="TypeAcheteur">
-                                                <option value="Supermarché" />
-                                                <option value="Centrale d'achat" />
-                                                <option value="Restaurants" />
-                                                <option value="Distributeurs alimentaires" />
-                                                <option value="Marchés de gros" />
-                                                <option value="Exportateurs" />
-                                                <option value="Industrie agroalimentaire" />
-                                            </datalist>
-                                        </div>
-                                    </div>
-                                    */}
+
 
                                     <div className='row mt-3'>
                                         <div className='col-lg-12' style={{ textAlign: 'left' }}>
@@ -265,21 +405,21 @@ const Registre = () => {
                                     <div className='row'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='nameAgricole' style={{ fontSize: '16px', fontWeight: '500' }}>Nom exploitation agricole * :</label>
-                                            <input type='text' placeholder='Luxuri_Agri' name='nameAgricole' className='form-control mt-1' />
+                                            <input type='text' placeholder='Luxuri_Agri' name='nameAgricole' className='form-control mt-1' value={nom_exploitation_agricole} onChange={(e) => { setnom_exploitation_agricole(e.target.value) }} />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='adresseAgricole' style={{ fontSize: '16px', fontWeight: '500' }}>Adresse exploitation  * :</label>
-                                            <input type='text' placeholder='Tunisie , Beja ' name='adresseAgricole' className='form-control mt-1' />
+                                            <input type='text' placeholder='Tunisie , Beja ' name='adresseAgricole' className='form-control mt-1' value={emplacement_de_exploitation} onChange={(e) => { setemplacement_de_exploitation(e.target.value) }} />
                                         </div>
                                     </div>
                                     <div className='row mt-2'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='SuperficieAgricole' style={{ fontSize: '16px', fontWeight: '500' }}>Superficie terres agricoles en (ha)  * :</label>
-                                            <input type="number" name="Superficie" className='form-control mt-1' placeholder='3434 ha' min={1} />
+                                            <input type="number" name="Superficie" className='form-control mt-1' placeholder='3434 ha' min={1} value={superficie_terres_agricoles} onChange={(e) => { setsuperficie_terres_agricoles(e.target.value) }} />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='TypeAgricole' style={{ fontSize: '16px', fontWeight: '500' }}>Type de culture agricole * :</label>
-                                            <input list="TypeAgricole" name="TypeAgricole" className='form-control form-select mt-1' />
+                                            <input list="TypeAgricole" name="TypeAgricole" className='form-control form-select mt-1' value={type_de_culture} onChange={(e) => { settype_de_culture(e.target.value) }} />
                                             <datalist id="TypeAgricole">
                                                 <option value="Cultivation de céréales" />
                                                 <option value="Culture des légumes" />
@@ -293,14 +433,14 @@ const Registre = () => {
                                     </div>
                                     <div className='row mt-3'>
                                         <div className='col-lg-12' style={{ textAlign: 'left' }}>
-                                            <label htmlFor='CertificationAgricole' style={{ fontSize: '16px', fontWeight: '500' }}>Description exploitation agricole * :</label>
-                                            <textarea className='form-control mt-1' cols={10} rows={4}></textarea>
+                                            <label htmlFor='CertificationAgricole' style={{ fontSize: '16px', fontWeight: '500' }} >Description exploitation agricole * :</label>
+                                            <textarea className='form-control mt-1' cols={10} rows={4} value={description_exploitation} onChange={(e) => { setdescription_exploitation(e.target.value) }}></textarea>
                                         </div>
                                     </div>
                                     <div className='row mt-2'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
-                                            <label htmlFor='ModeAgricole' style={{ fontSize: '16px', fontWeight: '500' }}>Modes de production agricole * :</label>
-                                            <input list="ModeAgricole" name="TypeAgricole" className='form-control form-select mt-1' />
+                                            <label htmlFor='ModeAgricole' style={{ fontSize: '16px', fontWeight: '500' }} >Modes de production agricole * :</label>
+                                            <input list="ModeAgricole" name="TypeAgricole" className='form-control form-select mt-1' value={modes_production} onChange={(e) => { setmodes_production(e.target.value) }} />
                                             <datalist id="ModeAgricole">
                                                 <option value="Agriculture traditionnelle" />
                                                 <option value="Agriculture biologique" />
@@ -311,7 +451,7 @@ const Registre = () => {
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='CertificationAgricole' style={{ fontSize: '16px', fontWeight: '500' }}>Les certifications agricoles * :</label>
-                                            <input list="CertificationAgricole" name="CertificationAgricole" className='form-control form-select mt-1' />
+                                            <input list="CertificationAgricole" name="CertificationAgricole" className='form-control form-select mt-1' value={certifications} onChange={(e) => { setcertifications(e.target.value) }} />
                                             <datalist id="CertificationAgricole">
                                                 <option value="Certification Bio" />
                                                 <option value="Certification HACCP" />
@@ -429,10 +569,10 @@ const Registre = () => {
                                     </div>
                                     <div class="row mt-4">
                                         <div class="col-md-6 text-left">
-                                            <button class="btn btn-secondary rounded-pill ms-3" onClick={() => { ReturnStep() }}> <i class="fa-solid fa-arrow-left" style={{ marginRight: '10px' }}></i>   Retour à l'étape précédente</button>
+                                            <button class="btn btn-secondary rounded-pill py-2 px-5 rounded-pill ms-2" onClick={() => { ReturnStep() }}> <i class="fa-solid fa-arrow-left" style={{ marginRight: '10px' }}></i>   Retour à l'étape précédente</button>
                                         </div>
                                         <div class="col-md-6 text-right">
-                                            <button class="btn btn-primary rounded-pill ms-3">Commencez maintenant </button>
+                                            <button class="btn btn-primary rounded-pill py-2 px-5 rounded-pill ms-2" onClick={SignupProducteur}>Commencez maintenant </button>
                                         </div>
                                     </div>
                                 </div>
@@ -450,7 +590,7 @@ const Registre = () => {
                                             <input type='text' placeholder='VedexAgri' name='nameEntreprise' className='form-control mt-1' />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
-                                            <label htmlFor='ActiviteEntreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Type Acheteur * :</label>
+                                            <label htmlFor='ActiviteEntreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Activité  * :</label>
                                             <input list="ActiviteEntreprise" name="ActiviteEntreprise" className='form-control form-select mt-1' placeholder='Supermarché' />
                                             <datalist id="ActiviteEntreprise">
                                                 <option value="Supermarché" />
