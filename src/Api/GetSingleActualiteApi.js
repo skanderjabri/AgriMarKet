@@ -1,15 +1,10 @@
 import axios from "axios";
 import Url from "../util/Url";
-function LoginApi(email, password) {
+function GetSingleActualiteApi(id) {
     try {
-        let URL = Url.BaseUrl + "/LoginUser";
-        var data = JSON.stringify({
-            email: email,
-            password: password,
-        });
-
+        let URL = Url.BaseUrl + `/GetSingleActualite/${id}`;
         return axios
-            .post(URL, data, {
+            .get(URL, {
                 headers: {
                     "Content-Type": "application/json",
                     charset: "utf-8",
@@ -23,4 +18,4 @@ function LoginApi(email, password) {
     }
 }
 
-export default LoginApi;
+export default GetSingleActualiteApi;

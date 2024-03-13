@@ -729,3 +729,25 @@
     background-position: 0% 50%, 50% 50%, 100% 100%;
   }
 }
+
+.facebook-button {
+  display: inline-block;
+  background-color: #4267b2; /* Couleur de fond de Facebook */
+  color: white; /* Couleur du texte */
+  padding: 10px 20px; /* Rembourrage interne */
+  font-size: 16px; /* Taille de la police */
+  font-weight: bold; /* Poids de la police */
+  text-align: center; /* Alignement du texte */
+  border: none; /* Supprimer la bordure */
+  border-radius: 8px; /* Rayon de bordure */
+  cursor: pointer; /* Curseur au survol */
+}
+
+/* Style au survol du bouton */
+.facebook-button:hover {
+  background-color: #3b5998;
+}
+
+.facebook-button:active {
+  background-color: #29487d;
+}

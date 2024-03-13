@@ -20,6 +20,7 @@
     "react-images-uploading": "^3.1.7",
     "react-router-dom": "^6.21.3",
     "react-scripts": "5.0.1",
+    "react-social": "^1.10.0",
     "simplelightbox": "^2.14.2",
     "web-vitals": "^2.1.4",
     "wowjs": "^1.1.3"
