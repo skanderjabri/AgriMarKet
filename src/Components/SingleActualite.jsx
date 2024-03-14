@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import Url from '../util/Url';
@@ -8,43 +8,49 @@ import GetSingleActualiteApi from '../Api/GetSingleActualiteApi';
 import GetAllAcualiteApi from '../Api/GetAllAcualiteApi';
 import TruncatedDescription from '../Function/TruncatedDescription';
 import { FacebookButton, FacebookCount } from "react-social";
+import { TwitterShareButton } from 'react-share';
+import ViewPdfActualite from './ViewPdfActualite';
+import copyURL from '../Function/CopyUrl';
 const SingleActualite = () => {
-
-    const [ActualiteDetails, setActualiteDetails] = useState({})
-    const [isLoading, setIsLoading] = useState(false)
-    const [ActualitesListe, setActualitesListe] = useState([])
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const [ActualiteDetails, setActualiteDetails] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [ActualitesListe, setActualitesListe] = useState([]);
     const { id } = useParams();
     let url = "https://agrimarket.vercel.app/actualite/" + id;
     useEffect(() => {
-        GetSingleActualite()
-        GetAllActualite()
-    }, [id])
+        GetSingleActualite();
+        GetAllActualite();
+    }, [id]);
 
     const GetSingleActualite = () => {
         GetSingleActualiteApi(id)
             .then((response) => {
-                setActualiteDetails(response.data.actualite)
+                setActualiteDetails(response.data.actualite);
             })
             .catch((error) => {
-                console.log("erreur se reproduit " + error)
+                console.log("erreur se reproduit " + error);
             })
             .finally(() => {
                 setIsLoading(true);
             });
-    }
+    };
     const GetAllActualite = () => {
         GetAllAcualiteApi(6, 1)
             .then((response) => {
-                setActualitesListe(response.data.ListeActualite)
+                setActualitesListe(response.data.ListeActualite);
             })
             .catch((error) => {
-                console.log("erreur se reproduit " + error)
+                console.log("erreur se reproduit " + error);
             })
             .finally(() => {
                 setIsLoading(true);
             });
 
-    }
+    };
+ 
 
     return (
         <div>
@@ -99,10 +105,28 @@ const SingleActualite = () => {
                                         {InsererSautLigne(ActualiteDetails.description_actualite)}
                                     </p>
                                 )}
-                                <div className="d-flex justify-content-between" style={{ marginLeft: '14px' }}>
+                                <div className="d-flex  " style={{ marginLeft: '14px' }}>
                                     <FacebookButton className="facebook-button" url={url} appId={401246749180496}>
                                         <i class="fa-brands fa-facebook"></i> {" "}Partager
                                     </FacebookButton>
+                                    <TwitterShareButton url={url} style={{ marginLeft: '10px' }} >
+                                        <div className="twitter-button">
+                                            <i class="fa-brands fa-twitter"></i>  {" "} Twitter
+                                        </div>
+                                    </TwitterShareButton>
+                                    <button className="inprimerfile-button"
+                                        style={{ marginLeft: '14px' }}
+                                        onClick={handleShow}
+                                    >
+                                        <i class="fa-regular fa-file-pdf"></i>   {" "}  Imprimer
+                                    </button>
+                                    <button className="linkcopy-button"
+                                        style={{ marginLeft: '14px' }}
+                                        onClick={copyURL}
+                                    >
+                                        <i class="fa-solid fa-link"></i>
+                                        {" "}  Copier lien
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -123,7 +147,6 @@ const SingleActualite = () => {
                                                 <div className="card-body">
                                                     <a class="card-title text-white" href={`/actualite/${actualite._id}`}> <b> {actualite.titre_actualite}  </b>.</a>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
@@ -132,7 +155,6 @@ const SingleActualite = () => {
                         </div>
                     </div>
                 ) : (
-
                     <div className='vh-100 d-flex justify-content-center align-items-center'>
                         <div className="loaderLog">
                         </div>
@@ -141,8 +163,15 @@ const SingleActualite = () => {
 
             </div>
             <Footer />
-        </div>
+            <ViewPdfActualite
+                show={show}
+                handleClose={handleClose}
+                description={ActualiteDetails.description_actualite}
+                titre={ActualiteDetails.titre_actualite}
+                image={ActualiteDetails.image_Cover}
+            />
+        </div >
     )
 }
 
-export default SingleActualite
+export default SingleActualite;

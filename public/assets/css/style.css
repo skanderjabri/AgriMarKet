@@ -751,3 +751,52 @@
 .facebook-button:active {
   background-color: #29487d;
 }
+.twitter-button {
+  display: inline-block;
+  background-color: #1da1f2;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.twitter-button:hover {
+  background-color: #0e71c8;
+}
+.inprimerfile-button {
+  display: inline-block;
+  background-color: #f54134;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.inprimerfile-button:hover {
+  background-color: #f71b1b;
+}
+
+.linkcopy-button {
+  display: inline-block;
+  background-color: #16e25d;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.linkcopy-button:hover {
+  background-color: #16e25d;
+}
