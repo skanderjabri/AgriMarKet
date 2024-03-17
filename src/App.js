@@ -10,6 +10,8 @@ import Registre from "./Components/Registre";
 import NotFound from "./Components/NotFound";
 import AllAcualites from "./Components/AllAcualites";
 import SingleActualite from "./Components/SingleActualite";
+import Community from "./Components/Community";
+import SingleForum from "./Components/SingleForum";
 function App() {
   return (
     <BrowserRouter
@@ -33,6 +35,8 @@ function App() {
         <Route path="/registre" element={<Registre />} />
         <Route path="/AllAcualites" element={<AllAcualites />} />
         <Route path="/actualite/:id" element={<SingleActualite />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/singleforum/:id" element={<SingleForum />} />
         <Route path="*" element={<NotFound />} />
 
       </Routes>
