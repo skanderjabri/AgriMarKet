@@ -7,21 +7,26 @@ import Url from '../util/Url';
 import GetAllForumApi from '../Api/GetAllForumApi';
 import GetAllCategorieForumApi from '../Api/GetAllCategorieForumApi';
 import AlertSweet from '../Function/AlertSweet';
+import { Pagination } from 'react-bootstrap';
 const Community = () => {
     const [AllForum, setAllForum] = useState([])
     const [AllCatforieForum, setAllCatforieForum] = useState([])
     const [isLoading, setIsLoading] = useState(false)
+    const [page, setPage] = useState(1);
+    const [totalePages, setTotalPages] = useState(1)
 
     useEffect(() => {
         GetAllForum();
         GetAllCategorieForum();
-    }, [])
+    }, [page])
 
     const GetAllForum = () => {
-        GetAllForumApi()
+        const limit = 9;
+        GetAllForumApi(limit, page)
             .then((response) => {
                 if (response.data.message === "ok") {
                     setAllForum(response.data.ListeForum)
+                    setTotalPages(Math.ceil(response.data.totalCount / limit));
                 }
             })
             .catch((error) => {
@@ -61,6 +66,15 @@ const Community = () => {
         }
         alert("skon")
     }
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage)
+        if (newPage > 1 && newPage < totalePages) {
+            setIsLoading(false)
+            return;
+        }
+    }
+
     return (
         <div>
             <Header />
@@ -91,7 +105,7 @@ const Community = () => {
                             <div className='mt-3'>
                                 <ul className="list-unstyled w_tag_list style-light">
                                     {AllCatforieForum.map((categorie, index) => (
-                                        <span>
+                                        <span key={index}>
                                             <li><a href="#">{categorie.nom_categorie_forum}</a></li>
                                         </span>
                                     ))}
@@ -132,7 +146,7 @@ const Community = () => {
                                                 </div>
                                                 <div className='col-lg-7' style={{ marginLeft: '20px' }}>
                                                     <a href={`/singleforum/${forum._id}`}><span style={{ color: 'black' }}>{forum.titre_forum}</span></a>
-                                                    <span className="text-primary" style={{ display: 'block', fontSize: '14px', marginTop: '5px' }}>
+                                                    <span className="text-gray" style={{ display: 'block', fontSize: '14px', marginTop: '5px' }}>
                                                         <span>  <i class="fa-regular fa-user"></i> {forum.userId.nom_producteur} {" "} {forum.userId.prenom_producteur}</span>
                                                         <span style={{ marginLeft: '20px' }}> <i class="fa-regular fa-clock"></i> {forum.createdAt.substr(0, 10)}{' '}{forum.createdAt.substr(11, 5)} </span>
                                                     </span>
@@ -148,8 +162,28 @@ const Community = () => {
                                         </div>
                                     ))}
                                 </div>
+
+                            </div>
+                            <div className='mt-5 d-flex justify-content-center align-items-center wow fadeInUp' data-wow-delay='0.21s'>
+                                <Pagination>
+                                    <Pagination.First onClick={() => handlePageChange(1)} />
+                                    <Pagination.Prev onClick={() => handlePageChange(Math.max(page - 1, 1))} />
+                                    {[...Array(totalePages)].map((_, i) => (
+                                        <Pagination.Item
+                                            key={i + 1}
+                                            active={i + 1 === page}
+                                            onClick={() => handlePageChange(i + 1)}
+                                        >
+                                            {i + 1}
+                                        </Pagination.Item>
+                                    ))}
+                                    <Pagination.Next onClick={() => handlePageChange(Math.min(page + 1, totalePages))} />
+                                    <Pagination.Last onClick={() => handlePageChange(totalePages)} />
+                                </Pagination>
+
                             </div>
                         </div>
+
                         <div className='col-lg-2'>
                             <div>
                                 <button className='btn btn-primary rounded-pill py-3 px-5' onClick={affichage}>

@@ -837,3 +837,9 @@
   background: var(--primary);
   color: white;
 }
+.iconTitre {
+  color: black;
+}
+.iconTitre:hover {
+  color: var(--primary);
+}
