@@ -36,10 +36,13 @@ const Login = () => {
           if (response.data.user.role === "acheteur") {
             localStorage.setItem("AgriMaketNomAcheuteur", response.data.user.nom_representant_entreprise)
             localStorage.setItem("AgriMaketPrenomAcheuteur", response.data.user.prenom_representant_entreprise)
+            localStorage.setItem("AgriMaketUserId", response.data.user._id)
+
           }
           else if (response.data.user.role === "producteur") {
             localStorage.setItem("AgriMaketNomProducteur", response.data.user.nom_producteur)
             localStorage.setItem("AgriMaketPrenomProducteur", response.data.user.prenom_producteur)
+            localStorage.setItem("AgriMaketUserId", response.data.user._id)
           }
           navigate('/')
           window.location.reload();

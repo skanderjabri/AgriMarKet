@@ -155,7 +155,7 @@ const Community = () => {
                                                 <div className='col-lg-3'>
                                                     <span className="iconhover" style={{}}><i class="fa-regular fa-heart"></i> {forum.NbresLikes}</span>
                                                     <span className="iconhover" style={{ marginLeft: '12px' }}> <i class="fa-regular fa-eye"></i> {forum.NbresVues}</span>
-                                                    <span className="iconhover" style={{ marginLeft: '12px' }}>  <i class="fa-regular fa-comments"></i><span style={{ marginLeft: '10px' }} >{forum.NbresVues}</span></span>
+                                                    <span className="iconhover" style={{ marginLeft: '12px' }}>  <i class="fa-regular fa-comments"></i><span style={{ marginLeft: '10px' }} >{forum.NbresCommentaires}</span></span>
                                                 </div>
                                             </div>
                                             <Divider />

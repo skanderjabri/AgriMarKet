@@ -7,6 +7,7 @@ const Header = () => {
         localStorage.removeItem("AgriMaketPrenomAcheuteur");
         localStorage.removeItem("AgriMaketNomProducteur");
         localStorage.removeItem("AgriMaketPrenomProducteur");
+        localStorage.removeItem("AgriMaketUserId")
         window.location.reload();
     }
     return (
