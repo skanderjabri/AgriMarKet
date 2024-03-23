@@ -8,49 +8,48 @@ import GetAllForumApi from '../Api/GetAllForumApi';
 import GetAllCategorieForumApi from '../Api/GetAllCategorieForumApi';
 import AlertSweet from '../Function/AlertSweet';
 import { Pagination } from 'react-bootstrap';
+import AddForum from './AddForum';
 const Community = () => {
-    const [AllForum, setAllForum] = useState([])
-    const [AllCatforieForum, setAllCatforieForum] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [AllForum, setAllForum] = useState([]);
+    const [AllCatforieForum, setAllCatforieForum] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(1);
-    const [totalePages, setTotalPages] = useState(1)
-
+    const [totalePages, setTotalPages] = useState(1);
+    const [show, setShow] = useState(false)
     useEffect(() => {
-        GetAllForum();
-        GetAllCategorieForum();
-    }, [page])
-
-    const GetAllForum = () => {
-        const limit = 9;
-        GetAllForumApi(limit, page)
-            .then((response) => {
-                if (response.data.message === "ok") {
-                    setAllForum(response.data.ListeForum)
-                    setTotalPages(Math.ceil(response.data.totalCount / limit));
-                }
-            })
-            .catch((error) => {
-                console.log("erreur se reproduit lors de la connexion " + error)
-            })
-            .finally(() => {
-                setIsLoading(true);
+        Promise.all([GetAllForum(), GetAllCategorieForum()])
+            .then(() =>
+                setIsLoading(true))
+            .catch(error => {
+                console.error("Une erreur s'est produite lors de la récupération des données:", error);
             });
-    }
+    }, [page]);
 
-    const GetAllCategorieForum = () => {
-        GetAllCategorieForumApi()
-            .then((response) => {
-                if (response.data.message === "ok") {
-                    setAllCatforieForum(response.data.ListeForumCategorie)
-                }
-            })
-            .catch((error) => {
-                console.log("erreur se reproduit lors de la connexion " + error)
-            })
-            .finally(() => {
-                setIsLoading(true);
-            });
-    }
+    const GetAllForum = async () => {
+        try {
+            const limit = 9;
+            const response = await GetAllForumApi(limit, page);
+            if (response.data.message === "ok") {
+                setAllForum(response.data.ListeForum);
+                setTotalPages(Math.ceil(response.data.totalCount / limit));
+            }
+        } catch (error) {
+            console.error("Une erreur s'est produite lors de la récupération des forums:", error);
+            throw error;
+        }
+    };
+
+    const GetAllCategorieForum = async () => {
+        try {
+            const response = await GetAllCategorieForumApi();
+            if (response.data.message === "ok") {
+                setAllCatforieForum(response.data.ListeForumCategorie);
+            }
+        } catch (error) {
+            console.error("Une erreur s'est produite lors de la récupération des catégories de forum:", error);
+            throw error;
+        }
+    };
     const menu = (
         <Menu>
             <Menu.Item key="1">Option 1</Menu.Item>
@@ -58,13 +57,20 @@ const Community = () => {
             <Menu.Item key="3">Option 3</Menu.Item>
         </Menu>
     );
-    const affichage = () => {
+    const CreateForum = () => {
+        const userRole = localStorage.getItem("AgriMaketRole");
+        const userId = localStorage.getItem("AgriMaketUserId");
 
-        if (localStorage.getItem("AgriMaketRole") == null || localStorage.getItem("AgriMaketRole") == "") {
-            AlertSweet('Il faut connecter !', '', 'error')
+
+        if (!userRole) {
+            AlertSweet('Il faut être connecté !', '', 'error');
             return;
         }
-        alert("skon")
+        if (userRole !== "producteur") {
+            AlertSweet("Vous n'êtes pas autorisé à commenter cet espace réservé exclusivement aux producteurs !", '', 'error');
+            return;
+        }
+        setShow(true)
     }
 
     const handlePageChange = (newPage) => {
@@ -74,9 +80,12 @@ const Community = () => {
             return;
         }
     }
-
+    const handleClose = () => {
+        setShow(false)
+    }
     return (
         <div>
+            <AddForum show={show} handleClose={handleClose} GetAllForum={GetAllForum} />
             <Header />
             {/* Page Header Start */}
             <div class="container-fluid page-header wow fadeIn" data-wow-delay="0.1s">
@@ -186,7 +195,7 @@ const Community = () => {
 
                         <div className='col-lg-2'>
                             <div>
-                                <button className='btn btn-primary rounded-pill py-3 px-5' onClick={affichage}>
+                                <button className='btn btn-primary rounded-pill py-3 px-5' onClick={CreateForum}>
                                     Créer un forum
                                 </button>
                             </div>

@@ -64,6 +64,10 @@ const Header = () => {
                             </NavLink>
                         )}
                     </div>
+                    <a className="btn-sm-square bg-white rounded-circle ms-3" href='/Notifications'>
+                        <small className=" fa fa-shopping-bag text-bodyfas fa-bell"></small>
+                        <span className="badge bg-danger rounded-pill" style={{ position: 'absolute', top: '10px', }}>0 </span>
+                    </a>
                     {localStorage.getItem("AgriMaketRole") !== "" && localStorage.getItem("AgriMaketRole") !== null && (
                         <NavLink to="/">
                             <a class="nav-item nav-link" href='/'>
@@ -79,10 +83,10 @@ const Header = () => {
                                             <a href="testimonial.html" class="dropdown-item">Testimonial</a>
                                             <a href="404.html" class="dropdown-item">404 Page</a>
                                         </div>
-
                                     </span>
                                 )}
                             </a>
+
                         </NavLink>
                     )}
                 </div>

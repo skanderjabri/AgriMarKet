@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import { Stepper, Step } from 'react-form-stepper';
 import ImageUploading from 'react-images-uploading';
-import SaveProducteurApi from '../Api/SaveProducteurApi';
 import useAlert from '../Function/AlertBootsrap';
 import Alert from "react-bootstrap/Alert"
 import { useNavigate } from 'react-router-dom';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { message, Upload } from 'antd';
+import AlertSweet from '../Function/AlertSweet';
+import SaveProducteurApi from '../Api/SaveProducteurApi';
+import SaveAcheteurApi from '../Api/SaveAcheteurApi';
 const Registre = () => {
     const navigate = useNavigate()
     const [selectedCard, setSelectedCard] = useState("");
@@ -28,6 +32,31 @@ const Registre = () => {
     const [certifications, setcertifications] = useState("");
     const { alertUser, showAlert, clearAlert } = useAlert();
     const [isLoading, setIsLoading] = useState(false);
+    // States Acheteur 
+    const [nom_representant_entreprise, setnom_representant_entreprise] = useState("")
+    const [prenom_representant_entreprise, setprenom_representant_entreprise] = useState("")
+    const [telephone_representant_entreprise, settelephone_representant_entreprise] = useState("")
+    const [adresse_representant_entreprise, setadresse_representant_entreprise] = useState("")
+    const [fonction_representant_entreprise, setfonction_representant_entreprise] = useState("")
+    const [service_representant_entreprise, setservice_representant_entreprise] = useState("")
+    const [nom_entreprise, setnom_entreprise] = useState("")
+    const [activite_entreprise, setactivite_entreprise] = useState("")
+    const [adresse_entreprise, setadresse_entreprise] = useState("")
+    const [ville_entreprise, setville_entreprise] = useState("")
+    const [code_postale_entreprise, setcode_postale_entreprise] = useState("")
+    const [Description_entreprise, setDescription_entreprise] = useState("")
+    const [email_entreprise, setemail_entreprise] = useState("")
+    const [telephone_entreprise, settelephone_entreprise] = useState("")
+    const [logo_entreprise, setlogo_entreprise] = useState(null)
+
+    const [image_user, setimage_user] = useState(null)
+    const [imageUrl, setImageUrl] = useState();
+    const [loading, setLoading] = useState(false);
+
+    const [imageUrl1, setImageUrl1] = useState();
+    const [loading1, setLoading1] = useState(false);
+
+
 
     const maxNumber = 10;
     const maxNumber1 = 1;
@@ -47,10 +76,137 @@ const Registre = () => {
         setstep1(false);
         setstep2(true);
     }
-    const step2tostep3 = () => {
+    const step2tostep3Acheteur = () => {
+        if (nom_representant_entreprise.trim() === "") {
+            showAlert("Le nom obligatoire !", "danger");
+            return;
+        }
+        if (prenom_representant_entreprise.trim() === "") {
+            showAlert("Le prénom obligatoire !", "danger");
+            return;
+        }
+        if (telephone_representant_entreprise.trim() === "") {
+            showAlert("Le numéro du téléphone  obligatoire !", "danger");
+            return;
+        }
+        if (adresse_representant_entreprise.trim() === "") {
+            showAlert(" L'adresse obligatoire !", "danger");
+            return;
+        }
+        if (service_representant_entreprise.trim() === "") {
+            showAlert(" Le service obligatoire !", "danger");
+            return;
+        }
+        if (fonction_representant_entreprise.trim() === "") {
+            showAlert(" La fonction obligatoire !", "danger");
+            return;
+        }
+        if (email.trim() === "") {
+            showAlert("Email obligatoire !", "danger");
+            return;
+        }
+        if (password.trim() === "") {
+            showAlert("Mot de passe obligatoire !", "danger");
+            return;
+        }
+        if (password.trim() !== confirmPassword.trim()) {
+            showAlert("Les deux mots de passe ne sont pas identiques !", "danger");
+            return;
+        }
+        if (!imageUrl1) {
+            showAlert("Image obligatoire", "danger");
+            return;
+        }
+        clearAlert();
         setstep2(false);
         setstep3(true);
     }
+
+
+    const SignUpAcheteur = async () => {
+        if (nom_entreprise.trim() === "") {
+            showAlert("Nom entreprise obligatoire", "danger");
+            return;
+        }
+        if (activite_entreprise.trim() === "") {
+            showAlert("Activité entreprise obligatoire", "danger");
+            return;
+        }
+        if (adresse_entreprise.trim() === "") {
+            showAlert("Adresse entreprise obligatoire", "danger");
+            return;
+        }
+        if (ville_entreprise.trim() === "") {
+            showAlert("Ville obligatoire", "danger");
+            return;
+        }
+        if (code_postale_entreprise.trim() === "") {
+            showAlert("Code postale obligatoire", "danger");
+            return;
+        }
+        if (Description_entreprise.trim() === "") {
+            showAlert("Description entreprise obligatoire", "danger");
+            return;
+        }
+        if (email_entreprise.trim() === "") {
+            showAlert("Email entreprise obligatoire", "danger");
+            return;
+        }
+        if (telephone_entreprise.trim() === "") {
+            showAlert("Téléphone entreprise obligatoire", "danger");
+            return;
+        }
+        if (!imageUrl) {
+            showAlert("Logo entreprise obligatoire", "danger");
+            return;
+        }
+        clearAlert();
+        setIsLoading(true)
+        await SaveAcheteurApi(
+            email,
+            password,
+            nom_representant_entreprise,
+            prenom_representant_entreprise,
+            telephone_representant_entreprise,
+            adresse_representant_entreprise,
+            service_representant_entreprise,
+            fonction_representant_entreprise,
+            nom_entreprise,
+            activite_entreprise,
+            code_postale_entreprise,
+            adresse_entreprise,
+            ville_entreprise,
+            Description_entreprise,
+            email_entreprise,
+            telephone_entreprise,
+            logo_entreprise,
+            image_user
+        ).then((response) => {
+            if (response.data.message === "Utilisateur existe !") {
+                showAlert("Producteur déja existe ! ", "danger");
+            }
+            else if (response.data.message === "ok") {
+                navigate('/Login')
+                window.location.reload();
+            }
+            else {
+                showAlert("erreur se reproduit lors de la création du l'utilisateur ", "danger");
+            }
+        })
+            .catch((error) => {
+                console.log("erreur se reproduit lors de la connexion " + error)
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+
+
+    }
+
+
+
+
+
     const ReturnStep = () => {
         setstep3(false);
         setstep2(true);
@@ -160,9 +316,89 @@ const Registre = () => {
             .finally(() => {
                 setIsLoading(false);
             });
-
-
     }
+
+    const getBase64 = (img, callback) => {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => callback(reader.result));
+        reader.readAsDataURL(img);
+    };
+    const beforeUpload = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+            message.error('Vous ne pouvez télécharger que des fichiers JPG/PNG !');
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            message.error("L'image doit être inférieure à 2 Mo!");
+        }
+        return isJpgOrPng && isLt2M;
+    };
+    const handleChange = (info) => {
+        if (info.file.status === 'uploading') {
+            setLoading(true);
+            return;
+        }
+        if (info.file.status === 'done') {
+            setimage_user(info.file.originFileObj);
+            getBase64(info.file.originFileObj, (url) => {
+                setLoading(false);
+                setImageUrl(url);
+            });
+        }
+    };
+    const handleChange1 = (info) => {
+        if (info.file.status === 'uploading') {
+            setLoading1(true);
+            return;
+        }
+        if (info.file.status === 'done') {
+            setlogo_entreprise(info.file.originFileObj);
+            getBase64(info.file.originFileObj, (url) => {
+                setLoading1(false);
+                setImageUrl1(url);
+            });
+        }
+    };
+    const uploadButton = (
+        <button
+            style={{
+                border: 0,
+                background: 'none',
+            }}
+            type="button"
+            className='col-lg-12'
+        >
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            <div
+                style={{
+                    marginTop: 8,
+                }}
+            >
+                Choisir un image
+            </div>
+        </button>
+    );
+    const uploadButton1 = (
+        <button
+            style={{
+                border: 0,
+                background: 'none',
+            }}
+            type="button"
+            className='col-lg-12'
+        >
+            {loading1 ? <LoadingOutlined /> : <PlusOutlined />}
+            <div
+                style={{
+                    marginTop: 8,
+                }}
+            >
+                Choisir un image
+            </div>
+        </button>
+    );
+
     return (
         <div className='conatinerSignUp ' >
             {isLoading && (
@@ -314,27 +550,36 @@ const Registre = () => {
                                     <div className='row' >
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='nom_Acheteur' style={{ fontSize: '16px', fontWeight: '500' }}> Votre nom *	 :</label>
-                                            <input type='text' placeholder='ALex Fernandes' name='nom_Acheteur' className='form-control mt-1' />
+                                            <input type='text' placeholder='ALex Fernandes' name='nom_Acheteur' className='form-control mt-1'
+                                                value={nom_representant_entreprise} onChange={(e) => setnom_representant_entreprise(e.target.value)} />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='pre_Acheteur' style={{ fontSize: '16px', fontWeight: '500' }}> Votre prénom * :</label>
-                                            <input type='text' placeholder='Emanuelle' name='pre_Acheteur' className='form-control mt-1' />
+                                            <input type='text' placeholder='Emanuelle' name='pre_Acheteur' className='form-control mt-1'
+                                                value={prenom_representant_entreprise} onChange={(e) => setprenom_representant_entreprise(e.target.value)}
+                                            />
                                         </div>
                                     </div>
                                     <div className='row mt-3'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='tel_Acheteur' style={{ fontSize: '16px', fontWeight: '500' }}> Téléphone * :</label>
-                                            <input type='number' placeholder='+216 23 45 56 98' name='tel_Acheteur' className='form-control mt-1' />
+                                            <input type='number' placeholder='+216 23 45 56 98' name='tel_Acheteur' className='form-control mt-1'
+                                                value={telephone_representant_entreprise} onChange={(e) => settelephone_representant_entreprise(e.target.value)}
+                                            />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='adr_Acheteur' style={{ fontSize: '16px', fontWeight: '500' }}> Votre adresse * :</label>
-                                            <input type='text' placeholder='Tunisie , Tunis ' name='adr_Acheteur' className='form-control mt-1' />
+                                            <input type='text' placeholder='Tunisie , Tunis ' name='adr_Acheteur' className='form-control mt-1'
+                                                value={adresse_representant_entreprise} onChange={(e) => setadresse_representant_entreprise(e.target.value)}
+                                            />
                                         </div>
                                     </div>
                                     <div className='row mt-3'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='ServiceAcheteur' style={{ fontSize: '16px', fontWeight: '500' }}>Services  * :</label>
-                                            <input list="ServiceAcheteur" name="ServiceAcheteur" className='form-control form-select mt-1' placeholder='Direction générale' />
+                                            <input list="ServiceAcheteur" name="ServiceAcheteur" className='form-control form-select mt-1' placeholder='Direction générale'
+                                                value={service_representant_entreprise} onChange={(e) => setservice_representant_entreprise(e.target.value)}
+                                            />
                                             <datalist id="ServiceAcheteur">
                                                 <option value="Direction générale" />
                                                 <option value="Direction commerciale" />
@@ -349,7 +594,8 @@ const Registre = () => {
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='FonctionAcheteur' style={{ fontSize: '16px', fontWeight: '500' }}>Fonction   * :</label>
-                                            <input list="FonctionAcheteur" name="FonctionAcheteur" className='form-control form-select mt-1' placeholder='Directeur' />
+                                            <input list="FonctionAcheteur" name="FonctionAcheteur" className='form-control form-select mt-1' placeholder='Directeur'
+                                                value={fonction_representant_entreprise} onChange={(e) => setfonction_representant_entreprise(e.target.value)} />
                                             <datalist id="FonctionAcheteur">
                                                 <option value="Directeur" />
                                                 <option value="Fournisseur" />
@@ -370,24 +616,56 @@ const Registre = () => {
                                     <div className='row mt-3'>
                                         <div className='col-lg-12' style={{ textAlign: 'left' }}>
                                             <label htmlFor='email_Acheteur' style={{ fontSize: '16px', fontWeight: '500' }}> Email * :</label>
-                                            <input type='email' placeholder='Emanuelle@gmail.com' name='email_Acheteur' className='form-control mt-1' />
+                                            <input type='email' placeholder='Emanuelle@gmail.com' name='email_Acheteur' className='form-control mt-1'
+                                                value={email} onChange={(e) => setEmail(e.target.value)}
+                                            />
                                         </div>
                                     </div>
                                     <div className='row mt-3'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='pass_Acheteur' style={{ fontSize: '16px', fontWeight: '500' }}> Mot de passe * :</label>
-                                            <input type='password' placeholder='********' name='pass_Acheteur' className='form-control mt-1' />
+                                            <input type='password' placeholder='********' name='pass_Acheteur' className='form-control mt-1'
+                                                value={password} onChange={(e) => setpassword(e.target.value)} />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='con_pass_Acheteur' style={{ fontSize: '16px', fontWeight: '500' }}> Confirmez le mot de passe * :</label>
-                                            <input type='password' placeholder='********' name='con_pass_Acheteur' className='form-control mt-1' />
+                                            <input type='password' placeholder='********' name='con_pass_Acheteur' className='form-control mt-1'
+                                                value={confirmPassword} onChange={(e) => setconfirmPassword(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className='col-lg-6' style={{ textAlign: 'left' }}>
+                                            <label htmlFor='con_pass_Acheteur' style={{ fontSize: '16px', fontWeight: '500' }}> Image représentant entreprise :</label>
+
+
+                                            <Upload
+                                                name="avatar"
+                                                listType="picture-card"
+                                                className="avatar-uploader"
+                                                showUploadList={false}
+                                                action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                                                beforeUpload={beforeUpload}
+                                                onChange={handleChange1}
+                                            >
+                                                {imageUrl1 ? (
+                                                    <img
+                                                        src={imageUrl1}
+                                                        alt="avatar"
+                                                        style={{
+                                                            width: '100%',
+                                                            height: '100%'
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    uploadButton1
+                                                )}
+                                            </Upload>
                                         </div>
                                     </div>
                                     <div class="row mt-4">
                                         <div class="col-md-6 text-left">
                                         </div>
                                         <div class="col-md-6 text-right">
-                                            <button class="btn btn-primary rounded-pill ms-3" onClick={() => step2tostep3()}>Passer à l'étape suivante  <i class="fa-solid fa-arrow-right" style={{ marginLeft: '10px' }}></i> </button>
+                                            <button class="btn btn-primary rounded-pill ms-3" onClick={() => step2tostep3Acheteur()}>Passer à l'étape suivante  <i class="fa-solid fa-arrow-right" style={{ marginLeft: '10px' }}></i> </button>
                                         </div>
                                     </div>
 
@@ -587,11 +865,14 @@ const Registre = () => {
                                     <div className='row'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='nameEntreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Nom de l'entreprise * :</label>
-                                            <input type='text' placeholder='VedexAgri' name='nameEntreprise' className='form-control mt-1' />
+                                            <input type='text' placeholder='VedexAgri' name='nameEntreprise' className='form-control mt-1'
+                                                value={nom_entreprise} onChange={(e) => setnom_entreprise(e.target.value)}
+                                            />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='ActiviteEntreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Activité  * :</label>
-                                            <input list="ActiviteEntreprise" name="ActiviteEntreprise" className='form-control form-select mt-1' placeholder='Supermarché' />
+                                            <input list="ActiviteEntreprise" name="ActiviteEntreprise" className='form-control form-select mt-1' placeholder='Supermarché'
+                                                value={activite_entreprise} onChange={(e) => setactivite_entreprise(e.target.value)} />
                                             <datalist id="ActiviteEntreprise">
                                                 <option value="Supermarché" />
                                                 <option value="Centrale d'achat" />
@@ -606,128 +887,71 @@ const Registre = () => {
                                     <div className='row mt-3'>
                                         <div className='col-lg-4' style={{ textAlign: 'left' }}>
                                             <label htmlFor='AdresseEntreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Adresse  * :</label>
-                                            <input type="text" name="AdresseEntreprise" className='form-control mt-1' placeholder='Tunisie ' min={1} />
+                                            <input type="text" name="AdresseEntreprise" className='form-control mt-1' placeholder='Tunisie '
+                                                value={adresse_entreprise} onChange={(e) => setadresse_entreprise(e.target.value)}
+                                            />
                                         </div>
                                         <div className='col-lg-4' style={{ textAlign: 'left' }}>
                                             <label htmlFor='VilleEntreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Ville * :</label>
-                                            <input type="text" name="VilleEntreprise" className='form-control mt-1' placeholder='Béja' min={1} />
+                                            <input type="text" name="VilleEntreprise" className='form-control mt-1' placeholder='Béja'
+                                                value={ville_entreprise} onChange={(e) => setville_entreprise(e.target.value)}
+                                            />
                                         </div>
                                         <div className='col-lg-4' style={{ textAlign: 'left' }}>
                                             <label htmlFor='CodePostale' style={{ fontSize: '16px', fontWeight: '500' }}>Code postale * :</label>
-                                            <input type="number" name="CodePostale" className='form-control mt-1' placeholder='1045' min={1} />
+                                            <input type="number" name="CodePostale" className='form-control mt-1' placeholder='1045' min={1}
+                                                value={code_postale_entreprise} onChange={(e) => setcode_postale_entreprise(e.target.value)} />
                                         </div>
                                     </div>
                                     <div className='row mt-3'>
                                         <div className='col-lg-12' style={{ textAlign: 'left' }}>
-                                            <label htmlFor='DescriptionEntreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Description Entreprise * :</label>
-                                            <textarea className='form-control mt-1' name='DescriptionEntreprise' cols={10} rows={4}></textarea>
+                                            <label htmlFor='DescriptionEntreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Description entreprise * :</label>
+                                            <textarea className='form-control mt-1' name='DescriptionEntreprise' cols={10} rows={4}
+                                                value={Description_entreprise} onChange={(e) => setDescription_entreprise(e.target.value)}
+                                            ></textarea>
                                         </div>
                                     </div>
                                     <div className='row mt-3'>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='Emailentreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Email entreprise * :</label>
-                                            <input type='email' name="Emailentreprise" className='form-control mt-1' placeholder='VedexAgri@gmail.com' />
+                                            <input type='email' name="Emailentreprise" className='form-control mt-1' placeholder='VedexAgri@gmail.com'
+                                                value={email_entreprise} onChange={(e) => setemail_entreprise(e.target.value)}
+                                            />
                                         </div>
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='Telephoneentreprise' style={{ fontSize: '16px', fontWeight: '500' }}>Téléphone entreprise * :</label>
-                                            <input type="number" name="Telephoneentreprise" className='form-control  mt-1' placeholder='216 71 73 98 34' />
+                                            <input type="number" name="Telephoneentreprise" className='form-control  mt-1' placeholder='216 71 73 98 34'
+                                                value={telephone_entreprise} onChange={(e) => settelephone_entreprise(e.target.value)} />
                                         </div>
                                     </div>
                                     <div className='col-lg-6 mt-4' style={{ textAlign: 'left' }}>
-                                        <label style={{ fontSize: '16px', fontWeight: '500' }}>Logo Entreprise * : </label>
+                                        <label style={{ fontSize: '16px', fontWeight: '500' }}>Logo entreprise * : </label>
+                                        <div className="mt-4">
+                                            <Upload
+                                                name="avatar"
+                                                listType="picture-card"
+                                                className="avatar-uploader"
+                                                showUploadList={false}
+                                                action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                                                beforeUpload={beforeUpload}
+                                                onChange={handleChange}
+                                            >
+                                                {imageUrl ? (
+                                                    <img
+                                                        src={imageUrl}
+                                                        alt="avatar"
+                                                        style={{
+                                                            width: '100%',
+                                                            height: '100%'
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    uploadButton
+                                                )}
+                                            </Upload>
+                                        </div>
                                     </div>
-                                    <div className="App mt-4">
-                                        <ImageUploading
-                                            multiple
-                                            value={images}
-                                            onChange={onChange}
-                                            maxNumber={maxNumber1}
-                                            dataURLKey="data_url"
-                                        >
-                                            {({
-                                                imageList,
-                                                onImageUpload,
-                                                onImageRemoveAll,
-                                                onImageRemove,
-                                                isDragging,
-                                                dragProps,
-                                            }) => (
-                                                // write your building UI
-                                                <>
-                                                    <div
-                                                        className="upload__image-wrapper dropzone d-flex justify-content-center align-items-center text-center"
-                                                        onClick={onImageUpload}
-                                                        {...dragProps}
-                                                        style={
-                                                            isDragging ? { color: "red" } : undefined
-                                                        }
-                                                    >
-                                                        <div className="dz-message needsclick">
-                                                            <div className="mb-3">
-                                                                <i class="fa-solid fa-cloud-arrow-down display-4 text-primary"></i>
-                                                            </div>
 
-                                                            <h4>
-                                                                Déposez le logo  ici ou cliquez pour télécharger.                                                            </h4>
-                                                        </div>
-                                                    </div>
-                                                    {imageList.length !== 0 && (
-                                                        <button
-                                                            className=" mt-3 btn  link text-danger"
-                                                            onClick={onImageRemoveAll}
-                                                        >
-                                                            X Supprimer l'image
-                                                        </button>
-                                                    )}
-                                                    <div className="container text-center w-100 p-3">
-                                                        <div className="row">
-                                                            {imageList.map((image, index) => (
-                                                                <div className="col-md-2" key={index}>
-                                                                    <div
-                                                                        className="image-item"
-                                                                        style={{
-                                                                            width: 120,
-                                                                            height: 120,
-                                                                            paddingTop: 10,
-                                                                            position: "relative",
-                                                                        }}
-                                                                    >
-
-                                                                        <i class="fa-solid fa-circle-xmark"
-                                                                            style={{
-                                                                                color: "red",
-                                                                                fontSize: 25,
-                                                                                position: "absolute",
-                                                                                right: -12,
-                                                                                top: -11,
-                                                                                cursor: "pointer",
-                                                                            }}
-                                                                            onClick={() =>
-                                                                                onImageRemove(index)
-                                                                            }>
-                                                                        </i>
-                                                                        <div className="shake-admin">
-                                                                            <img
-                                                                                className="image-admin-shake"
-                                                                                style={{
-                                                                                    borderRadius: 15,
-                                                                                    width: 100,
-                                                                                    height: 100,
-                                                                                    border: "1px solid red",
-                                                                                }}
-                                                                                src={image["data_url"]}
-                                                                                alt=""
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                </>
-                                            )}
-                                        </ImageUploading>
-                                    </div>
                                     <div className="row mt-3" style={{
                                         textAlign: "left"
                                     }}>
@@ -741,7 +965,7 @@ const Registre = () => {
                                             <button class="btn btn-secondary rounded-pill ms-3" onClick={() => { ReturnStep() }} > <i class="fa-solid fa-arrow-left" style={{ marginRight: '10px' }}></i>   Retour à l'étape précédente</button>
                                         </div>
                                         <div class="col-md-6 text-right">
-                                            <button class="btn btn-primary rounded-pill ms-3">Commencez maintenant </button>
+                                            <button class="btn btn-primary rounded-pill ms-3" onClick={SignUpAcheteur}>Commencez maintenant </button>
                                         </div>
                                     </div>
                                 </div>

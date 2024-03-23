@@ -6,21 +6,24 @@ import Footer from './Footer'
 import Spinner from '../Function/Spinner'
 import { Avatar, Divider } from 'antd'
 import Url from '../util/Url'
-import GetAllForumCommentByIdForum from '../Api/GetAllForumCommentByIdForumApi'
-import CreateCommentForumApi from '../Api/CreateCommentForumApi'
 import AlertSweet from '../Function/AlertSweet'
 import InputEmoji from 'react-input-emoji'
 import TextareaAutosize from 'react-textarea-autosize';
+import GetAllForumCommentByIdForum from '../Api/GetAllForumCommentByIdForumApi'
+import CreateCommentForumApi from '../Api/CreateCommentForumApi'
 import LikeDislikeForumCommentApi from '../Api/LikeDislikeForumCommentApi'
+import LikeDislikeForumApi from '../Api/LikeDislikeForumApi'
+import GetAllForumApi from '../Api/GetAllForumApi'
 const SingleForum = () => {
     const [DetailsForum, setDetailsForum] = useState({})
     const [isLoading, setIsLoading] = useState(false)
     const [ListComment, setListComment] = useState([]);
+    const [AllForum, setAllForum] = useState([]);
     const [comment_forum, setComment_forum] = useState("")
     const { id } = useParams()
 
     useEffect(() => {
-        Promise.all([GetSingleForum(), GetAllCommentForum()])
+        Promise.all([GetSingleForum(), GetAllCommentForum(), GetAllForum()])
             .then(() => {
                 setIsLoading(true);
             })
@@ -102,7 +105,34 @@ const SingleForum = () => {
         try {
             const response = await LikeDislikeForumCommentApi(userId, CommentId);
 
-            const message = response.data.message === "Like ajouté" ? "Le like a été ajouté." : "Le like a été retiré.";
+            const message = response.data.message === "Like ajoute" ? "Le like a été ajouté." : "Le like a été retiré.";
+            AlertSweet(message, '', 'success');
+            await Promise.all([GetSingleForum(), GetAllCommentForum()]);
+        } catch (error) {
+            AlertSweet("Erreur !", "", 'error');
+        } finally {
+            setIsLoading(true);
+        }
+    }
+    const LikeDislikeForum = async () => {
+        const userRole = localStorage.getItem("AgriMaketRole");
+        const userId = localStorage.getItem("AgriMaketUserId");
+
+        if (!userRole) {
+            AlertSweet('Il faut être connecté !', "", 'error');
+            return;
+        }
+        if (userRole !== "producteur") {
+            AlertSweet("Vous n'êtes pas autorisé à commenter cet espace réservé exclusivement aux producteurs !", "", 'error');
+            return;
+        }
+
+        setIsLoading(false);
+        try {
+            const ForumId = DetailsForum._id;
+            const response = await LikeDislikeForumApi(userId, ForumId);
+
+            const message = response.data.message === "Like ajoute" ? "Le like a été ajouté." : "Le like a été retiré.";
             AlertSweet(message, '', 'success');
             await Promise.all([GetSingleForum(), GetAllCommentForum()]);
         } catch (error) {
@@ -112,6 +142,20 @@ const SingleForum = () => {
         }
     }
 
+
+    const GetAllForum = async () => {
+        try {
+            const limit = 6;
+            const page = 1;
+            const response = await GetAllForumApi(limit, page);
+            if (response.data.message === "ok") {
+                setAllForum(response.data.ListeForum);
+            }
+        } catch (error) {
+            console.error("Une erreur s'est produite lors de la récupération des forums:", error);
+            throw error;
+        }
+    };
     return (
         <div>
             <Header />
@@ -134,7 +178,7 @@ const SingleForum = () => {
                     {isLoading ? (
                         <div>
                             <div className='row'>
-                                <div className='col-lg-10'>
+                                <div className='col-lg-9'>
                                     <div className='card'>
                                         <div className='card-body'>
                                             <div className='d-flex p-2'>
@@ -149,7 +193,12 @@ const SingleForum = () => {
                                                     </span>
                                                 </div>
                                                 <div className='col-lg-3'>
-                                                    <span className="iconhover" style={{}}><i class="fa-regular fa-heart"></i> {DetailsForum.NbresLikes}</span>
+                                                    <span >
+                                                        <span className="iconhover" style={{ cursor: 'pointer' }}
+                                                            onClick={LikeDislikeForum}><i class="fa-regular fa-heart"></i>
+                                                        </span>
+                                                        <span className='text-gray' style={{ marginLeft: '2px' }}> {DetailsForum.NbresLikes}</span>
+                                                    </span>
                                                     <span className="iconhover" style={{ marginLeft: '12px' }}> <i class="fa-regular fa-eye"></i> {DetailsForum.NbresVues}</span>
                                                     <span className="iconhover" style={{ marginLeft: '12px' }}>  <i class="fa-regular fa-comments"></i><span style={{ marginLeft: '10px' }} >{ListComment.length}</span></span>
                                                 </div>
@@ -192,8 +241,30 @@ const SingleForum = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className='col-lg-2'>
-                                    ssssssssss
+                                <div className='col-lg-3'>
+                                    <h5 className='text-primary'>Forums récents</h5>
+                                    <div className='row'>
+                                        <div className='card'>
+                                            <div className='card-body'>
+                                                {AllForum.map((forum, index) => (
+                                                    <div key={index} className='row'>
+                                                        <div className='d-flex p-2'>
+                                                            <div className='col-lg-12' style={{ marginLeft: '20px' }}>
+                                                                <a href={`/singleforum/${forum._id}`}><span style={{ color: 'black' }}>{forum.titre_forum}</span></a>
+                                                                <span className="text-gray" style={{ display: 'block', fontSize: '14px', marginTop: '5px' }}>
+                                                                    <span className='mt-1'>  <i class="fa-regular fa-user"></i> {forum.userId.nom_producteur} {" "} {forum.userId.prenom_producteur}</span> <br />
+                                                                    <span className='mt-1' style={{}}> <i class="fa-regular fa-clock"></i> {forum.createdAt.substr(0, 10)}{' '}{forum.createdAt.substr(11, 5)} </span>
+                                                                </span>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <Divider />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className='row g-4 mt-4'>
