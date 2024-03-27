@@ -242,6 +242,10 @@ const Registre = () => {
             showAlert("Les deux mots de passe ne sont pas identiques !", "danger");
             return;
         }
+        if (!imageUrl) {
+            showAlert("Image obligatoire", "danger");
+            return;
+        }
         clearAlert();
         setstep2(false);
         setstep3(true);
@@ -297,6 +301,7 @@ const Registre = () => {
             modes_production,
             certifications,
             description_exploitation,
+            image_user,
             images
         ).then((response) => {
             if (response.data.message === "Utilisateur existe !") {
@@ -527,6 +532,33 @@ const Registre = () => {
                                         <div className='col-lg-6' style={{ textAlign: 'left' }}>
                                             <label htmlFor='con_pass_prod' style={{ fontSize: '16px', fontWeight: '500' }}> Confirmez le mot de passe * :</label>
                                             <input type='password' placeholder='********' name='con_pass_prod' className='form-control mt-1' value={confirmPassword} onChange={(e) => { setconfirmPassword(e.target.value) }} />
+                                        </div>
+                                    </div>
+                                    <div className='col-lg-6 mt-4' style={{ textAlign: 'left' }}>
+                                        <label style={{ fontSize: '16px', fontWeight: '500' }}>Image * : </label>
+                                        <div className="mt-4">
+                                            <Upload
+                                                name="avatar"
+                                                listType="picture-card"
+                                                className="avatar-uploader"
+                                                showUploadList={false}
+                                                action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                                                beforeUpload={beforeUpload}
+                                                onChange={handleChange}
+                                            >
+                                                {imageUrl ? (
+                                                    <img
+                                                        src={imageUrl}
+                                                        alt="avatar"
+                                                        style={{
+                                                            width: '100%',
+                                                            height: '100%'
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    uploadButton
+                                                )}
+                                            </Upload>
                                         </div>
                                     </div>
                                     <div class="row mt-4">

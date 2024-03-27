@@ -14,7 +14,9 @@ function SaveProducteurApi(
     modes_production,
     certifications,
     description_exploitation,
+    image_user,
     images
+
 ) {
     try {
         let URL = Url.BaseUrl + "/SignUpProducteur";
@@ -35,6 +37,7 @@ function SaveProducteurApi(
         formData.append("modes_production", modes_production);
         formData.append("certifications", certifications);
         formData.append("description_exploitation", description_exploitation);
+        formData.append("image_user", image_user);
         return axios
             .post(URL, formData)
             .then((response) => {

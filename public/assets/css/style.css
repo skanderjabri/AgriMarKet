@@ -843,3 +843,7 @@
 .iconTitre:hover {
   color: var(--primary);
 }
+ 
+.table-cell {
+  padding-bottom: 20px; /* Ajoutez la marge souhaitée */
+}

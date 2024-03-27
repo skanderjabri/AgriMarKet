@@ -4,150 +4,41 @@ import Footer from './Footer';
 import TruncatedDescription from '../Function/TruncatedDescription';
 import GetAllAcualiteApi from '../Api/GetAllAcualiteApi';
 import Url from '../util/Url';
-const products = [
-    {
-        id: 1,
-        name: 'Fresh Tomato',
-        image: './assets/img/product-1.jpg',
-        isNew: true,
-        price: 19.00,
-        discountedPrice: 29.00,
-        status: 1
-
-    },
-    {
-        id: 2,
-        name: 'Fresh Tomato',
-        image: './assets/img/product-2.jpg',
-        isNew: true,
-        price: 19.00,
-        discountedPrice: 29.00,
-        status: 0
-
-    },
-    {
-        id: 3,
-        name: 'Fresh Tomato',
-        image: './assets/img/product-3.jpg',
-        isNew: true,
-        price: 19.00,
-        discountedPrice: 29.00,
-        status: 0
-
-    }, {
-        id: 4,
-        name: 'Fresh Tomato',
-        image: './assets/img/product-4.jpg',
-        isNew: true,
-        price: 19.00,
-        discountedPrice: 29.00,
-        status: 1
-
-    }, {
-        id: 5,
-        name: 'Fresh Tomato',
-        image: './assets/img/product-5.jpg',
-        isNew: true,
-        price: 19.00,
-        discountedPrice: 29.00,
-        status: 0
-    },
-    {
-        id: 6,
-        name: 'Fresh Tomato',
-        image: './assets/img/product-6.jpg',
-        isNew: true,
-        price: 19.00,
-        discountedPrice: 29.00,
-        status: 1
-
-    },
-    {
-        id: 7,
-        name: 'Fresh Tomato',
-        image: './assets/img/product-7.jpg',
-        isNew: true,
-        price: 19.00,
-        discountedPrice: 29.00,
-        status: 1
-
-    },
-    {
-        id: 8,
-        name: 'Fresh Tomato',
-        image: './assets/img/product-8.jpg',
-        isNew: true,
-        price: 19.00,
-        discountedPrice: 29.00,
-        status: 1
-
-    },
-];
-const ProductItem = ({ product }) => (
-    <div className="col-xl-3 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay={product.delay}>
-        <div className="product-item">
-            <div className="position-relative bg-light overflow-hidden">
-                <img className="img-fluid w-100" src={product.image} alt="" />
-                {product.status === 1 && <div className="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3" >En stock</div>}
-                {product.status === 0 && <div className="bg-danger rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">Hors stock</div>}
-
-            </div>
-            <div className="text-center p-4">
-                <a className="d-block h5 mb-2" href={`#${product.id}`}>{product.name}</a>
-                <span className="text-primary me-1"> {product.price.toFixed(2)} TND</span>
-                <span className="text-body text-decoration-line-through">{product.discountedPrice.toFixed(2)} TND</span>
-            </div>
-            <div className="d-flex border-top">
-                <small className="w-50 text-center border-end py-2">
-                    <a className="text-body" href=""><i className="fa fa-eye text-primary me-2"></i>Voir les détails
-                    </a>
-                </small>
-                <small className="w-50 text-center py-2">
-                    <a className="text-body" href=""><i className="fa fa-shopping-bag text-primary me-2"></i>Ajouter au panier
-                    </a>
-                </small>
-            </div>
-        </div>
-    </div>
-);
-
-const ProductList = ({ productList }) => (
-    <div className="row g-4">
-        {productList.map((product) => (
-            <ProductItem key={product.id} product={product} />
-        ))}
-    </div>
-);
-const ProductSection = () => (
-    <div className="tab-pane fade show p-0 active">
-        <ProductList productList={products} />
-        <div className="col-12 text-center wow fadeInUp" data-wow-delay="0.1s">
-            <a className="btn btn-primary rounded-pill py-3 px-5 mt-3" href="">Browse More Products</a>
-        </div>
-    </div>
-);
-
-
+import GetAllProduitsApi from '../Api/GetAllProduitsApi';
 const Home = () => {
     const [ActualitesListe, setActualitesListe] = useState([])
+    const [ProduitsListe, setProduitsListe] = useState([])
+
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
-        GetActualite()
+        Promise.all([GetActualite(), GetAllProduit()])
+            .then(() => setIsLoading(true))
+            .catch(error => console.log("Erreur lors du chargement des données: " + error));
+    }, []);
 
-    }, [])
     const GetActualite = () => {
-        GetAllAcualiteApi(6, 1)
-            .then((response) => {
-                setActualitesListe(response.data.ListeActualite)
+        return GetAllAcualiteApi(6, 1)
+            .then(response => {
+                setActualitesListe(response.data.ListeActualite);
             })
-            .catch((error) => {
-                console.log("erreur se reproduit " + error)
-            })
-            .finally(() => {
-                setIsLoading(true);
+            .catch(error => {
+                console.log("Erreur lors du chargement des actualités: " + error);
+                throw error;
             });
     }
+
+    const GetAllProduit = () => {
+        return GetAllProduitsApi(6, 1)
+            .then(response => {
+                setProduitsListe(response.data.ListeProduit);
+            })
+            .catch(error => {
+                console.log("Erreur lors du chargement des produits: " + error);
+                throw error;
+            });
+    }
+
     return (
         <div className="App">
             <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -398,7 +289,6 @@ const Home = () => {
                                 <p>Les dernières offres de fruits et légumes ou effectuez une recherche .
                                 </p>
                             </div>
-
                         </div>
                         <div class="col-lg-6 text-start text-lg-end wow slideInRight" data-wow-delay="0.1s">
                             <ul class="nav nav-pills d-inline-flex justify-content-end mb-5">
@@ -414,8 +304,55 @@ const Home = () => {
                             </ul>
                         </div>
                     </div>
+                    {isLoading && (
 
-                    <ProductSection />
+                        <div className="row g-4">
+                            <div className="tab-pane fade show p-0 active">
+                                <div className='row'>
+                                    {ProduitsListe.map((product, index) => (
+                                        <div className="col-xl-3 col-lg-4 col-md-6 wow fadeInUp">
+                                            <div className="product-item">
+                                                <div className="position-relative bg-light overflow-hidden">
+                                                    <img className='img-fluid w-100' src={`${Url.BaseFile}/produits/${product.images[0]}`} alt="" />
+
+                                                    {product.status === 1 && <div className="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3" >En stock</div>}
+                                                    {product.status === 0 && <div className="bg-danger rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">Hors stock</div>}
+
+                                                </div>
+                                                <div className="text-center p-4">
+                                                    <a className="d-block h5 mb-2" href={`/singleproduct/${product._id}`}>{product.nom_produit}</a>
+                                                    {product.discount == 0 && (
+                                                        <span className="text-primary me-1"> {product.prix} TND</span>
+                                                    )}
+                                                    {product.discount != 0 && (
+                                                        <span>
+                                                            <span className="text-primary me-1"> {product.prix - (product.prix * (product.discount / 100))} TND</span>
+                                                            <span className="text-body text-decoration-line-through">{product.prix} TND</span>
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="d-flex border-top">
+                                                    <small className="w-50 text-center border-end py-2">
+                                                        <a className="text-body" href={`/singleproduct/${product._id}`}><i className="fa fa-eye text-primary me-2"></i>Voir les détails
+                                                        </a>
+                                                    </small>
+
+                                                    <small className="w-50 text-center py-2">
+                                                        <a className="text-body" href=""><i className="fa fa-shopping-bag text-primary me-2"></i>Ajouter au panier
+                                                        </a>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="col-12 text-center wow fadeInUp" data-wow-delay="0.1s">
+                                    <a className="btn btn-primary rounded-pill py-3 px-5 mt-3" href="">Explorer Plus de Produits</a>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             {/* Product End */}

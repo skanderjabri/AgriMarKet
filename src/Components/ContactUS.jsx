@@ -1,9 +1,77 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Header from './Header'
 import Footer from './Footer'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import useAlert from '../Function/AlertBootsrap';
+import { Alert } from 'react-bootstrap';
+import CreateContactApi from '../Api/CreateContactApi';
 const ContactUS = () => {
+    const { alertUser, showAlert, clearAlert } = useAlert();
+    const [nom, setnom] = useState("");
+    const [email, setemail] = useState("");
+    const [sujet, setsujet] = useState("");
+    const [contenu, setcontenu] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    var height = window.innerHeight;
+    var width = window.innerWidth;
+
+    const SendMessage = (e) => {
+        e.preventDefault();
+        if (!nom.trim()) {
+            showAlert("Nom obligatoire !", "danger");
+            return;
+        }
+        if (!email.trim()) {
+            showAlert("Email obligatoire !", "danger");
+            return;
+        }
+        if (!sujet.trim()) {
+            showAlert("Sujet obligatoire !", "danger");
+            return;
+        }
+        if (!contenu.trim()) {
+            showAlert("Message obligatoire !", "danger");
+            return;
+        }
+        clearAlert();
+        setIsLoading(true)
+        CreateContactApi(nom, email, sujet, contenu)
+            .then((response) => {
+                if (response.data.message === "ok") {
+                    setIsLoading(false)
+                    toast.success("Le message a été envoyé avec succès.");
+                    setemail("");
+                    setnom("");
+                    setsujet("");
+                    setcontenu("");
+                }
+                else {
+                    toast.error("Une erreur survient lors de l'envoi du message.");
+                }
+            })
+    }
     return (
         <div>
+            {isLoading && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "rgba(0,0,0,0.3)",
+                        zIndex: 100000,
+                        height: height,
+                    }}
+                >
+                    <div class="loaderLog"></div>
+                </div>
+            )}
             <Header />
             {/* Page Header Start */}
             <div class="container-fluid page-header wow fadeIn" data-wow-delay="0.1s">
@@ -29,6 +97,7 @@ const ContactUS = () => {
                             .</p>
                     </div>
                     <div class="row g-5 justify-content-center">
+
                         <div class="col-lg-5 col-md-12 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="bg-primary text-white d-flex flex-column justify-content-center h-100 p-5">
                                 <h5 class="text-white">Appelez-nous
@@ -54,33 +123,38 @@ const ContactUS = () => {
                             <p class="mb-4">   Nous sommes très fiers de tout ce que nous faisons, un contrôle complet sur les produits nous permet de nous assurer que les clients reçoivent le meilleur service
                                 .</p>
                             <form>
+                                {alertUser && alertUser.message !== "" && alertUser.type !== "" && (
+                                    <Alert key={alertUser.type} variant={alertUser.type} >
+                                        {alertUser.message}
+                                    </Alert>
+                                )}
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="name" placeholder="Votre nom" />
+                                            <input type="text" class="form-control" id="name" placeholder="Votre nom" value={nom} onChange={(e) => setnom(e.target.value)} />
                                             <label for="name">Votre nom *</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="email" class="form-control" id="email" placeholder="Votre Email" />
+                                            <input type="email" class="form-control" id="email" placeholder="Votre Email" value={email} onChange={(e) => setemail(e.target.value)} />
                                             <label for="email">Votre Email *</label>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="subject" placeholder="Sujet" />
+                                            <input type="text" class="form-control" id="subject" placeholder="Sujet" value={sujet} onChange={(e) => setsujet(e.target.value)} />
                                             <label for="subject">Sujet *</label>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-floating">
-                                            <textarea class="form-control" placeholder="Votre Message" id="message" style={{ height: '200px' }}></textarea>
+                                            <textarea class="form-control" placeholder="Votre Message" id="message" style={{ height: '200px' }} value={contenu} onChange={(e) => setcontenu(e.target.value)}></textarea>
                                             <label for="message">Message *</label>
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        <button class="btn btn-primary rounded-pill py-3 px-5" type="submit">Envoyer Message</button>
+                                        <button class="btn btn-primary rounded-pill py-3 px-5" type="button" onClick={SendMessage}>Envoyer Message</button>
                                     </div>
                                 </div>
                             </form>
